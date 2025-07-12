@@ -124,11 +124,14 @@ export class CatalogoComponent implements OnInit{
     if (url?.startsWith('http')) {
       return url;
     }
-    return `${environment.IMG_URL}/uploads/img/${url}`;
+
+    console.log(`${environment.IMG_URL}/uploads/${url}`);
+
+    return `${environment.IMG_URL}/uploads/${url}`;
   }
 
   handleImageError(event: any) {
-    event.target.src = 'https://importaciones-sarmiento.com/error.svg';
+    event.target.src = 'error.svg';
   }
 
   updateSEO() {

@@ -104,14 +104,14 @@ export class ProductoComponent implements OnInit, OnDestroy {
       return url;
     }
     if (!url) {
-      return 'https://importaciones-sarmiento.com/error.svg';
+      return 'error.svg';
     }
 
-    return `${environment.IMG_URL}/uploads/img/${url}`;
+    return `${environment.IMG_URL}/uploads/${url}`;
   }
 
   handleImageError(event: any) {
-    event.target.src = 'https://importaciones-sarmiento.com/error.svg';
+    event.target.src = 'error.svg';
   }
 
   getDisplayedImageUrl(): string {
@@ -254,8 +254,8 @@ export class ProductoComponent implements OnInit, OnDestroy {
 
     this.seoService.updateMetadata({
       title: this.producto.nombre,
-      description: this.producto.descripcion?.substring(0, 155) || 'Producto de Importaciones Sarmiento',
-      keywords: `${this.producto.keywords}, flores artificiales, importaciones sarmiento, ${this.producto.codigo}`,
+      description: this.producto.descripcion?.substring(0, 155) || 'Producto de FrutexPeru',
+      keywords: `${this.producto.keywords}, ${this.producto.codigo}`,
       image: this.getDisplayedImageUrl()
     });
   }

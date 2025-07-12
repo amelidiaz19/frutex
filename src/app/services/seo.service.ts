@@ -48,7 +48,7 @@ export class SeoService {
 
     // Add canonical URL
     if (isPlatformBrowser(this.platformId)) {
-      const baseUrl = environment.production ? 'https://importaciones-sarmiento.com' : window.location.origin;
+      const baseUrl = environment.production ? 'https://localhost:4200' : window.location.origin;
       const path = window.location.pathname;
       const canonicalUrl = `${baseUrl}${path}`;
 

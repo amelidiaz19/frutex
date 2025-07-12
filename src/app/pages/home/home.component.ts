@@ -62,7 +62,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.seoService.updateMetadata({
       title: 'Inicio',
       description: 'FrutexPeru - El sabor tradicional que estabas esperando.',
-      image: 'https://importaciones-sarmiento.com/icon.png'
     });
 
     if (isPlatformBrowser(this.platformId)) {
@@ -234,7 +233,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   handleImageError(event: any) {
-    event.target.src = 'https://importaciones-sarmiento.com/error.svg';
+    event.target.src = 'error.svg';
   }
 
   @HostListener('window:resize')
