@@ -1,0 +1,60 @@
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home/importa1/ecommerce"
+PassengerBaseURI "/"
+PassengerNodejs "/home/importa1/nodevenv/ecommerce/20/bin/node"
+PassengerAppType node
+PassengerStartupFile server/server.mjs
+PassengerAppEnv production
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
+
+# Cache Control
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault A0
+    ExpiresByType image/gif A691200
+    ExpiresByType image/png A691200
+    ExpiresByType image/jpeg A691200
+    ExpiresByType text/css A691200
+    ExpiresByType text/javascript A691200
+    ExpiresByType application/javascript A691200
+    ExpiresByType font/otf A691200
+    ExpiresByType font/ttf A691200
+    ExpiresByType font/woff A691200
+    ExpiresByType font/woff2 A691200
+</IfModule>
+
+# Security Headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>
+
+# Angular Routes
+RewriteEngine On
+RewriteBase /
+
+# Handle Authorization Header
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+# Redirect to HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Angular Routes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /index.html [L]
+
+# PHP Configuration
+<IfModule mime_module>
+  AddHandler application/x-httpd-alt-php81 .php .php8 .phtml
+</IfModule>
+
+# Error Documents
+ErrorDocument 401 "Unauthorized"
+ErrorDocument 403 "Forbidden"
+ErrorDocument 404 /index.html
+ErrorDocument 500 "Server Error"

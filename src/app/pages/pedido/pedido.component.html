@@ -1,0 +1,101 @@
+<div class="container mx-auto p-4 dark:bg-gray-900">
+    <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Mis Pedidos</h2>
+    <p class="text-sm font-bold text-gray-600 dark:text-gray-400 mb-6">
+      Se enviará información sobre el seguimiento de tus pedidos al WhatsApp y correo electrónico registrado en tu cuenta.
+      <span class="block mt-2 text-primary-600 dark:text-primary-400">
+        Nota: Para pedidos con delivery, el costo adicional de envío será informado a través de WhatsApp según tu zona de entrega.
+      </span>
+    </p>
+  
+    <!-- Loading state -->
+    <div *ngIf="loading" class="flex justify-center my-4">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>
+  
+    <!-- Error message -->
+    <div *ngIf="error" class="bg-red-100 dark:bg-red-900/30 border-l-4 border-red-500 text-red-700 dark:text-red-400 p-4 mb-4">
+      {{ error }}
+    </div>
+  
+    <!-- No orders message -->
+    <div *ngIf="!loading && pedidos.length === 0" class="text-center py-8 text-gray-500 dark:text-gray-400">
+      No tienes pedidos registrados
+    </div>
+  
+    <!-- Orders list -->
+    <div *ngFor="let pedido of pedidos" class="bg-white dark:bg-gray-800 shadow rounded-lg mb-4 p-6">
+      <div class="flex justify-between items-center mb-4">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Pedido #{{ pedido.id }}</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400">{{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
+        </div>
+        <span [ngClass]="{
+            'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400': pedido.estado === 'en_proceso',
+            'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400': pedido.estado === 'confirmado',
+            'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400': pedido.estado === 'entregado',
+            'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400': pedido.estado === 'anulado'
+          }" class="px-3 py-1 rounded-full text-sm font-medium">
+            {{ pedido.estado === 'en_proceso' ? 'En Proceso' : 
+            pedido.estado === 'confirmado' ? 'Confirmado' : 
+            pedido.estado === 'entregado' ? 'Entregado' : 
+            pedido.estado === 'anulado' ? 'Anulado' : 
+            pedido.estado }}
+        </span>
+      </div>
+  
+      <div class="space-y-4">
+        <!-- Order details -->
+        <div class="grid grid-cols-2 gap-4 text-sm">
+          <div>
+            <p class="text-gray-600 dark:text-gray-400">Método de pago</p>
+            <p class="font-medium text-gray-900 dark:text-white">{{ pedido.metodoPago }}</p>
+          </div>
+          <div>
+            <p class="text-gray-600 dark:text-gray-400">Tipo de entrega</p>
+            <p class="font-medium text-gray-900 dark:text-white">{{ pedido.tipoEntrega }}</p>
+          </div>
+        </div>
+
+        <!-- Delivery Address -->
+        <div *ngIf="pedido.tipoEntrega === 'delivery' && pedido.direccion" class="mt-4 text-sm">
+          <h4 class="font-medium mb-2 text-gray-900 dark:text-white">Dirección de entrega</h4>
+          <div class="grid grid-cols-1 gap-2">
+            <p><span class="text-gray-600 dark:text-gray-400">Calle: </span> <span class="text-gray-900 dark:text-white">{{ pedido.direccion.calle }} {{ pedido.direccion.numero }}</span></p>
+            <p><span class="text-gray-600 dark:text-gray-400">Distrito: </span> <span class="text-gray-900 dark:text-white">{{ pedido.direccion.distrito }}</span></p>
+            <p *ngIf="pedido.direccion.referencia"><span class="text-gray-600 dark:text-gray-400">Referencia: </span> <span class="text-gray-900 dark:text-white">{{ pedido.direccion.referencia }}</span></p>
+          </div>
+        </div>
+  
+        <!-- Items list -->
+        <div class="mt-4">
+          <h4 class="font-medium mb-2 text-gray-900 dark:text-white">Productos</h4>
+          <div class="space-y-2">
+            <div *ngFor="let item of pedido.items" class="flex justify-between items-center py-2 border-b dark:border-gray-700">
+              <div>
+                <p class="font-medium text-gray-900 dark:text-white">{{ item.nombre }}</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  {{ item.cantidad }} {{ item.tipo_venta }}
+                </p>
+              </div>
+              <div class="text-right">
+                <p class="text-sm text-gray-600 dark:text-gray-400">S/ {{ item.precio_unitario }} c/u</p>
+                <p class="font-medium text-gray-900 dark:text-white">S/ {{ item.subtotal }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Total and notes -->
+        <div class="mt-4 pt-4 dark:border-gray-700">
+          <div class="flex justify-between items-center">
+            <span class="text-lg font-bold text-gray-900 dark:text-white">Total</span>
+            <span class="text-lg font-bold text-gray-900 dark:text-white">S/ {{ pedido.total }}</span>
+          </div>
+          <div *ngIf="pedido.notas" class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            <p class="font-medium">Notas:</p>
+            <p>{{ pedido.notas }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

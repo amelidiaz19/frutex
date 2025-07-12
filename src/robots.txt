@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://importaciones-sarmiento.com/sitemap.xml

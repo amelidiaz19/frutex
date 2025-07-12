@@ -1,0 +1,185 @@
+<div class="p-6">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Mi Cuenta</h1>
+    <button 
+      (click)="toggleEdit()"
+      class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+      {{ isEditing ? 'Cancelar' : 'Editar Perfil' }}
+    </button>
+  </div>
+
+  <!-- View Mode -->
+  <div class="space-y-6" *ngIf="cliente && !isEditing">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Información Personal -->
+      <div class="space-y-4">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Información Personal</h2>
+        <div>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Nombre completo</p>
+          <p class="text-lg text-gray-900 dark:text-white">{{cliente.nombre}} {{cliente.apellido}}</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500 dark:text-gray-400">DNI</p>
+          <p class="text-lg text-gray-900 dark:text-white">{{cliente.dni}}</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Email</p>
+          <p class="text-lg text-gray-900 dark:text-white">{{cliente.email}}</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Teléfono</p>
+          <p class="text-lg text-gray-900 dark:text-white">{{cliente.telefono}}</p>
+        </div>
+      </div>
+
+      <!-- Dirección -->
+      <div class="space-y-4">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Dirección</h2>
+        <div>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Calle</p>
+          <p class="text-lg text-gray-900 dark:text-white">{{cliente.direccion.calle}}</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Número</p>
+          <p class="text-lg text-gray-900 dark:text-white">{{cliente.direccion.numero}}</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Distrito</p>
+          <p class="text-lg text-gray-900 dark:text-white">{{cliente.direccion.distrito}}</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Referencia</p>
+          <p class="text-lg text-gray-900 dark:text-white">{{cliente.direccion.referencia}}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preferencias -->
+    <div class="space-y-4 mt-6">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Preferencias</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Método de pago preferido</p>
+          <p class="text-lg text-gray-900 dark:text-white capitalize">{{cliente.metodoPago}}</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Tipo de entrega preferido</p>
+          <p class="text-lg text-gray-900 dark:text-white capitalize">{{cliente.tipoEntrega}}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notas -->
+    <div class="space-y-4 mt-6" *ngIf="cliente.notas">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Notas Adicionales</h2>
+      <p class="text-lg text-gray-900 dark:text-white">{{cliente.notas}}</p>
+    </div>
+  </div>
+
+  <!-- Edit Mode -->
+  <form *ngIf="cliente && isEditing" [formGroup]="editForm" (ngSubmit)="onSubmit()" class="space-y-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Información Personal -->
+      <div class="space-y-4">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Información Personal</h2>
+        
+        <div class="space-y-2">
+          <label class="text-sm text-gray-500">Nombre</label>
+          <input type="text" formControlName="nombre"
+            class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-sm text-gray-500">Apellido</label>
+          <input type="text" formControlName="apellido"
+            class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-sm text-gray-500">Email</label>
+          <input type="email" formControlName="email"
+            class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-sm text-gray-500">Teléfono</label>
+          <input type="tel" formControlName="telefono"
+            class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        </div>
+      </div>
+
+      <!-- Dirección -->
+      <div class="space-y-4" formGroupName="direccion">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Dirección</h2>
+        
+        <div class="space-y-2">
+          <label class="text-sm text-gray-500">Calle</label>
+          <input type="text" formControlName="calle"
+            class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-sm text-gray-500">Número</label>
+          <input type="text" formControlName="numero"
+            class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-sm text-gray-500">Distrito</label>
+          <input type="text" formControlName="distrito"
+            class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-sm text-gray-500">Referencia</label>
+          <input type="text" formControlName="referencia"
+            class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        </div>
+      </div>
+    </div>
+
+    <!-- Preferencias -->
+    <div class="space-y-4">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Preferencias</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-2">
+          <label class="text-sm text-gray-500">Método de pago preferido</label>
+          <select formControlName="metodoPago"
+            class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+            <option value="efectivo">Efectivo</option>
+            <option value="tarjeta">Tarjeta</option>
+            <option value="yape">Yape</option>
+          </select>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-sm text-gray-500">Tipo de entrega preferido</label>
+          <select formControlName="tipoEntrega"
+            class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+            <option value="recojo">Recojo en tienda</option>
+            <option value="delivery">Delivery</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notas -->
+    <div class="space-y-2">
+      <label class="text-sm text-gray-500">Notas Adicionales</label>
+      <textarea formControlName="notas" rows="3"
+        class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+    </div>
+
+    <!-- Submit Buttons -->
+    <div class="flex justify-end space-x-4">
+      <button type="button" (click)="toggleEdit()"
+        class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors dark:border-gray-600 dark:hover:bg-gray-700 dark:text-white">
+        Cancelar
+      </button>
+      <button type="submit"
+        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+        Guardar Cambios
+      </button>
+    </div>
+  </form>
+</div>

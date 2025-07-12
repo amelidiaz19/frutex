@@ -1,0 +1,121 @@
+<section class="bg-gray-50 dark:bg-white">
+  <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto min-h-screen lg:py-0">
+    <div [class]="!showRegister ? 'w-full sm:max-w-md' : 'w-full sm:max-w-xl'" 
+      class="bg-white rounded-lg shadow dark:border md:mt-0 xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+      <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+        
+        <!-- Login Form -->
+        <div *ngIf="!showRegister">
+          <h1 class="text-xl font-bold text-gray-900 md:text-2xl dark:text-white">
+            Iniciar Sesión
+          </h1>
+          <form class="space-y-4 md:space-y-6 mt-4" (ngSubmit)="onLogin()">
+            <div>
+              <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+              <input type="email" name="email" id="email" [(ngModel)]="loginData.email"
+                class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                placeholder="cuenta@correo.com" required>
+            </div>
+            <div>
+              <label for="passwd" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Contraseña</label>
+              <input type="password" name="passwd" id="passwd" [(ngModel)]="loginData.passwd"
+                class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                placeholder="••••••••" required>
+            </div>
+            <button type="submit"
+              class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+              Ingresar
+            </button>
+
+            <div *ngIf="loginError" class="mt-2 text-sm text-red-600 dark:text-red-500">
+              {{ loginError }}
+            </div>
+
+            <p class="text-sm font-light text-gray-500 dark:text-gray-400">
+              ¿No tiene una cuenta? 
+              <button type="button" (click)="toggleRegister(true)"
+                class="font-medium text-primary-600 hover:underline dark:text-primary-500">
+                Regístrese aquí
+              </button>
+            </p>
+          </form>
+        </div>
+
+        <!-- Register Form -->
+        <div *ngIf="showRegister">
+          <h1 class="text-xl font-bold text-gray-900 md:text-2xl dark:text-white mb-6">
+            Crear Cuenta  
+            <p class="text-sm font-light text-gray-500 dark:text-gray-400 mt-2">
+              ¿Ya tiene una cuenta? 
+              <button type="button" (click)="toggleRegister(false)"
+                class="font-medium text-primary-600 hover:underline dark:text-primary-500">
+                Inicie sesión aquí
+              </button>
+            </p>
+          </h1>
+          
+          <form class="space-y-4 md:space-y-6" (ngSubmit)="onRegister()">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+              <!-- First Column -->
+              <div class="space-y-4">
+                <div>
+                  <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre *</label>
+                  <input type="text" [(ngModel)]="registerData.nombre" name="nombre"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    placeholder="Ingrese su nombre" required>
+                </div>
+
+                <div>
+                  <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Apellido *</label>
+                  <input type="text" [(ngModel)]="registerData.apellido" name="apellido"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    placeholder="Ingrese su apellido" required>
+                </div>
+
+                <div>
+                  <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">DNI *</label>
+                  <input type="text" [(ngModel)]="registerData.numero_documento" name="dni" maxlength="8"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    placeholder="Ingrese su DNI" required>
+                </div>
+              </div>
+
+              <!-- Second Column -->
+              <div class="space-y-4">
+                <div>
+                  <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email *</label>
+                  <input type="email" [(ngModel)]="registerData.email" name="email"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    placeholder="cuenta@correo.com" required>
+                </div>
+                
+                <div>
+                  <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Contraseña *</label>
+                  <input type="password" [(ngModel)]="registerData.passwd" name="passwd"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    placeholder="••••••••" required>
+                </div>
+
+                <div>
+                  <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Teléfono</label>
+                  <input type="tel" [(ngModel)]="registerData.telefono" name="telefono" maxlength="9"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    placeholder="Ingrese su teléfono">
+                </div>
+              </div>
+            </div>
+
+            <button type="submit"
+              class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+              Crear cuenta
+            </button>
+
+            <div *ngIf="registerError" class="mt-2 text-sm text-red-600 dark:text-red-500">
+              {{ registerError }}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

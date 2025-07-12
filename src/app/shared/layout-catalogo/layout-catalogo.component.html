@@ -1,0 +1,63 @@
+<div class="bg-white dark:bg-gray-900">
+  <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+    <!-- Mobile Filter Toggle -->
+    <div class="md:hidden mb-4">
+      <button 
+        type="button"
+        (click)="isFilterOpen = !isFilterOpen"
+        class="w-full flex items-center justify-between p-3 text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+      >
+        <span class="font-medium flex items-center gap-2">
+          <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+          Filtros
+        </span>
+        <svg class="w-4 h-4 transition-transform" [class.rotate-180]="isFilterOpen" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="flex flex-col md:flex-row gap-6">
+      <!-- Filters Sidebar -->
+      <div class="w-full md:w-64 flex-shrink-0" [ngClass]="{'hidden md:block': !isFilterOpen}">
+        <div class="sticky top-4 bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+          <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white hidden md:block">Filtros</h3>
+          
+          <!-- Loading state for keywords -->
+          <div *ngIf="isLoadingKeywords" class="flex justify-center py-4">
+            <div class="animate-spin h-5 w-5 border-2 border-primary-600 rounded-full border-t-transparent"></div>
+          </div>
+    
+          <!-- Keywords list with scrollable container -->
+          <div *ngIf="!isLoadingKeywords" class="space-y-2 max-h-[60vh] overflow-y-auto pr-2">
+            <label *ngFor="let keyword of keywords" class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded">
+              <input
+                type="checkbox"
+                [checked]="selectedKeywords.includes(keyword)"
+                (change)="toggleKeyword(keyword)"
+                class="rounded border-gray-300 text-primary-600 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700"
+              >
+              <span class="text-sm text-gray-700 dark:text-gray-300">{{ keyword }}</span>
+            </label>
+          </div>
+    
+          <!-- Clear filters button -->
+          <button
+            *ngIf="selectedKeywords.length > 0"
+            (click)="clearFilters()"
+            class="mt-4 w-full px-4 py-2 text-sm text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+          >
+            Limpiar filtros
+          </button>
+        </div>
+      </div>
+    
+      <!-- Content area -->
+      <div class="flex-1">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>

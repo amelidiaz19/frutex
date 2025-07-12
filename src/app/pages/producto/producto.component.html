@@ -1,0 +1,192 @@
+<div class="container mx-auto px-4 py-8">
+
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org/",
+          "@type": "Product",
+          "name": "{{ producto?.nombre }}",
+          "description": "{{ producto?.descripcion }}",
+          "sku": "{{ producto?.codigo }}",
+          "image": "{{ getDisplayedImageUrl() }}",
+          "brand": {
+            "@type": "Brand",
+            "name": "Importaciones Sarmiento"
+          },
+          "offers": {
+            "@type": "Offer",
+            "url": "{{ window.location.href }}",
+            "priceCurrency": "PEN",
+            "price": "{{ producto?.precio_unidad }}",
+            "availability": "{{ producto?.stock_actual > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' }}"
+          }
+        }
+    </script>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center items-center h-64">
+        <div role="status" class="animate-spin">
+            <span class="sr-only">Cargando...</span>
+        </div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 dark:bg-red-800 dark:border-red-600 dark:text-red-400 px-4 py-3 rounded">
+        {{ error }}
+    </div>
+
+    <!-- Product Information -->
+    <div *ngIf="!loading && !error && producto" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Product Images Section -->
+        <div class="space-y-4">
+            <!-- Main Image -->
+            <div class="aspect-w-1 aspect-h-1 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden">
+                <img [src]="getDisplayedImageUrl()" 
+                     [alt]="producto.nombre"
+                     (error)="handleImageError($event)"
+                     class="w-full h-full object-center object-cover">
+            </div>
+
+            <!-- Thumbnail Gallery -->
+            <div *ngIf="productImages?.length" class="grid grid-cols-5 gap-2">
+                <div *ngFor="let image of productImages" 
+                     (click)="setMainImage(image)"
+                     class="aspect-w-1 aspect-h-1 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden cursor-pointer transition-all duration-200"
+                     [class.ring-2]="currentImageUrl === image.imagen_url"
+                     [class.ring-primary-500]="currentImageUrl === image.imagen_url">
+                    <img [src]="getImageUrl(image.imagen_url)" 
+                         [alt]="producto.url_slug"
+                         (error)="handleImageError($event)"
+                         class="w-full h-full object-cover hover:opacity-75 transition-opacity">
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Details -->
+        <div class="space-y-6">
+            <h1 class="text-3xl font-bold text-black-900 dark:text-black">{{ producto.nombre }}</h1>
+            <span class="font-medium">SKU: {{ producto.codigo }}</span>
+
+            <div class="text-black-600 dark:text-black-400">
+                <span class="font-medium">Descripción:</span>
+                <pre class="font-sans whitespace-pre-wrap break-words">{{ producto.descripcion }}</pre>
+                <p class="space-y-6 font-medium">Disponible: {{ producto.cajas }} cajas</p>
+                <p class="font-medium">Unidades x Caja: {{ producto.cantidad_por_caja }}</p>
+            </div>
+            <!-- Price Selection -->
+            <div class="space-y-4">
+                <div class="flex flex-col space-y-2">
+                    <label class="text-black-700 dark:text-black-300">Seleccionar Precio:</label>
+                        <select [(ngModel)]="selectedPriceType" (change)="validarCantidad()" class="rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-primary-500 focus:border-primary-500">
+                            <option [value]="'caja'" *ngIf="producto.precio_caja">Caja - S/{{ producto.precio_caja }}</option>
+                            <option [value]="'docena'" *ngIf="producto.precio_docena">Docena - S/{{ producto.precio_docena }}</option>
+                            <option [value]="'unidad'" *ngIf="producto.precio_unidad">Unidad - S/{{ producto.precio_unidad }}</option>
+                        </select>
+                </div>
+            
+                <div class="flex flex-col space-y-2">
+                    <label class="text-black-700 dark:text-black-300">Cantidad:</label>
+                        <div class="flex items-center space-x-2">
+                            <button (click)="decreaseQuantity()" 
+                            [disabled]="isMinQuantity()" 
+                            class="px-3 py-1 bg-gray-200 dark:bg-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-200 dark:text-black-800 disabled:opacity-50 disabled:cursor-not-allowed">
+                                -
+                            </button>
+                            <input type="number" [(ngModel)]="quantity" 
+                                (ngModelChange)="validarCantidad()" 
+                                (input)="onQuantityInput($event)"
+                                [min]="getMinQuantity()" 
+                                [max]="getMaxQuantity()" 
+                                class="w-20 text-center rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-primary-500 focus:border-primary-500">
+                            <button (click)="increaseQuantity()" 
+                                    [disabled]="isMaxQuantity()" 
+                                    class="px-3 py-1 bg-gray-200 dark:bg-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-200 dark:text-black-800 disabled:opacity-50 disabled:cursor-not-allowed">
+                                +
+                            </button>
+                        </div>
+                </div>
+            
+                <div class="text-xl font-bold text-primary-700 dark:text-primary-500">
+                    Total: S/{{ calculateTotal().toFixed(2) }}
+                </div>
+            </div>
+
+            <!-- Add to Cart Button -->
+            <button (click)="addToCart()" class="w-full bg-primary-600 text-white px-6 py-3 rounded-md hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                Agregar al Carrito
+            </button>
+        </div>
+    </div>
+
+
+    <div *ngIf="!loading && !error && producto" class="mt-16">
+        <h2 class="text-2xl font-bold text-black-900 dark:text-white mb-8">Productos Relacionados</h2>
+        
+        <div class="relative" (mouseenter)="stopAutoSlide()" (mouseleave)="startProductSlide()">
+            <!-- Previous Button -->
+            <button (click)="prevSlide()" 
+                    class="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 shadow-lg">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg> 
+            </button>
+
+            <!-- Products Carousel -->
+            <div class="overflow-hidden">
+                <div class="flex transition-transform duration-300 ease-in-out" 
+                [style.transform]="'translateX(-' + (currentSlide * (100/slidesPerView)) + '%)'">
+                    <div *ngFor="let product of relatedProducts" 
+                         class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex-shrink-0 px-2">
+                        <div class="group relative overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-800 h-full">
+                            <div class="aspect-h-4 aspect-w-3 bg-gray-200">
+                                <img [src]="getImageUrl(product.foto)"
+                                     [alt]="product.nombre"
+                                     (error)="handleImageError($event)"
+                                     class="h-48 w-full object-cover transition duration-500 group-hover:scale-105">
+                            </div>
+                            <div class="p-4">
+                                <h3 class="text-lg font-medium text-black-900 dark:text-white line-clamp-2">
+                                    {{product.nombre}}
+                                </h3>
+                                <p class="mt-2 text-sm text-white dark:text-white">
+                                    Código: {{product.codigo}}
+                                </p>
+                                <button (click)="navigateToProduct(product.id, product.url_slug)"
+                                        class="mt-4 w-full rounded-lg bg-primary-600 px-4 py-2 text-center text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                                    Ver Producto
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Next Button -->
+            <button (click)="nextSlide()" 
+                class="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 shadow-lg">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Add this near the top of your template -->
+    <div *ngIf="showToastMessage" 
+    class="fixed top-5 right-5 z-50 flex items-center w-full max-w-xs p-4 text-black-500 bg-white rounded-lg shadow dark:text-black-400 dark:bg-gray-800" 
+    role="alert">
+    <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg text-primary-700 bg-red-100 dark:bg-primary-500 dark:text-red-200">
+        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+        </svg>
+    </div>
+    <div class="ms-3 text-sm font-normal">{{ toastMessage }}</div>
+    <button type="button" 
+        (click)="showToastMessage = false" 
+        class="ms-auto -mx-1.5 -my-1.5 bg-white text-black-400 hover:text-black-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-black-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700">
+    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+    </svg>
+    </button>
+    </div>
+
+</div>
