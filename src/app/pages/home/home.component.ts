@@ -62,7 +62,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.seoService.updateMetadata({
       title: 'Inicio',
       description: 'FrutexPeru - El sabor tradicional que estabas esperando.',
-      //keywords: 'flores artificiales, decoración, importaciones sarmiento, mayorista, minorista, perú',
       image: 'https://importaciones-sarmiento.com/icon.png'
     });
 

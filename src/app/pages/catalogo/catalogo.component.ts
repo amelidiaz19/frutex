@@ -134,9 +134,6 @@ export class CatalogoComponent implements OnInit{
   updateSEO() {
     this.seoService.updateMetadata({
       title: 'Catálogo de Productos',
-      description: 'Explora nuestro catálogo de flores artificiales y artículos de decoración. Encuentra los mejores productos al por mayor y menor en Importaciones Sarmiento.',
-      keywords: 'flores artificiales, decoración, importaciones sarmiento, catálogo, productos, mayorista, minorista',
-      image: 'https://importaciones-sarmiento.com/icon.png'
     });
   }
 

@@ -46,7 +46,7 @@ export class MiCuentaComponent implements OnInit {
 
     this.seoService.updateMetadata({
       title: 'Mi Cuenta',
-      description: 'Gestiona tu información personal, direcciones de entrega y preferencias de compra.',
+      description: 'Gestiona tu información personal y preferencias de compra.',
       keywords: 'cuenta cliente, perfil usuario, configuración cuenta'
     });
 
